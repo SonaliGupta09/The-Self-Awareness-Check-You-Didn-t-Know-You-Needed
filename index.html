@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,11 +10,14 @@
       padding: 20px;
       line-height: 1.6;
     }
-    .question { margin-bottom: 20px; }
     button {
+      margin-top: 15px;
       padding: 10px 20px;
-      font-size: 16px;
       cursor: pointer;
+    }
+    .option {
+      display: block;
+      margin: 8px 0;
     }
   </style>
 </head>
@@ -26,134 +28,184 @@
 <p>This isn’t about right or wrong. Answer honestly.</p>
 
 <div id="quiz"></div>
-<button onclick="showResult()">Submit</button>
+<button onclick="nextQuestion()">Next</button>
 
-<h3 id="result"></h3>
+<div id="result"></div>
 
 <script>
 
+let currentQ = 0;
+let answers = [];
+
 const questions = [
-  {
-    q: "You put effort into something, but the response feels unclear.",
-    options: ["Shame","Frustration","Regret","Envy"],
-    correct: "Frustration",
-    type: "FR"
-  },
-  {
-    q: "You see someone getting recognition you wanted.",
-    options: ["Envy","Betrayal","Disappointment","Pride"],
-    correct: "Envy",
-    type: "EN"
-  },
-  {
-    q: "You feel drained but keep going.",
-    options: ["Burnout","Anxiety","Determination","Guilt"],
-    correct: "Burnout",
-    type: "BU"
-  },
-  {
-    q: "You feel uncertain about your future.",
-    options: ["Insecurity","Excitement","Anger","Hope"],
-    correct: "Insecurity",
-    type: "IN"
-  },
-  {
-    q: "You worry about things not working out and doubt yourself.",
-    options: ["Fear","Insecurity","Anxiety","Frustration"],
-    correct: "Insecurity",
-    type: "IN"
-  },
-  {
-    q: "Things feel repetitive and uninteresting.",
-    options: ["Boredom","Frustration","Anxiety","Contentment"],
-    correct: "Boredom",
-    type: "BO"
-  },
-  {
-    q: "You feel constantly drained and overwhelmed.",
-    options: ["Guilt","Frustration","Anxiety","Burnout"],
-    correct: "Burnout",
-    type: "BU"
-  },
-  {
-    q: "You struggle to say no and feel overwhelmed.",
-    options: ["Fear","Insecurity","Anxiety","Frustration"],
-    correct: "Insecurity",
-    type: "IN"
-  },
-  {
-    q: "You keep scrolling and can’t focus.",
-    options: ["Boredom","Frustration","Anxiety","Contentment"],
-    correct: "Boredom",
-    type: "BO"
-  },
-  {
-    q: "You keep rechecking things even when done.",
-    options: ["Perfectionism","Anxiety","Distrust","Control"],
-    correct: "Anxiety",
-    type: "AN"
-  },
-  {
-    q: "You receive praise but feel slightly uncomfortable.",
-    options: ["Gratitude","Embarrassment","Humility","Pride"],
-    correct: "Pride",
-    type: "PR"
-  },
-  {
-    q: "You feel calm satisfaction after finishing something.",
-    options: ["Joy","Relief","Contentment","Pride"],
-    correct: "Contentment",
-    type: "CO"
-  }
+
+{
+q: "You put effort into something that mattered to you—maybe a message, a plan, or a gesture—but the response you receive feels unclear or underwhelming. You start questioning yourself.",
+options: ["Shame","Frustration","Regret","Envy"],
+correct: "Frustration",
+explain: "Frustration comes when effort doesn’t meet expectation. Shame would make you feel flawed, not just blocked.",
+type: "FR"
+},
+
+{
+q: "You see someone receiving appreciation or attention for something that feels close to what you’ve done or wanted.",
+options: ["Envy","Betrayal","Disappointment","Pride"],
+correct: "Envy",
+explain: "Envy is wanting what someone else received. It’s not about broken trust.",
+type: "EN"
+},
+
+{
+q: "You’ve been handling a lot and feel drained, but you keep going without pausing.",
+options: ["Burnout","Anxiety","Determination","Guilt"],
+correct: "Burnout",
+explain: "Burnout is prolonged exhaustion. Determination energizes, burnout drains.",
+type: "BU"
+},
+
+{
+q: "You think about the future and feel uncertain about whether things will work out for you.",
+options: ["Insecurity","Excitement","Anger","Hope"],
+correct: "Insecurity",
+explain: "Insecurity is uncertainty tied to self-doubt.",
+type: "IN"
+},
+
+{
+q: "You find yourself thinking ‘what if things don’t work out’ and doubting your ability.",
+options: ["Fear","Insecurity","Anxiety","Frustration"],
+correct: "Insecurity",
+explain: "This includes self-doubt, not just worry.",
+type: "IN"
+},
+
+{
+q: "You’ve been doing similar things repeatedly and nothing feels engaging anymore.",
+options: ["Boredom","Frustration","Anxiety","Contentment"],
+correct: "Boredom",
+explain: "Boredom comes from lack of stimulation.",
+type: "BO"
+},
+
+{
+q: "You feel constantly occupied and it’s affecting your energy and well-being.",
+options: ["Guilt","Frustration","Anxiety","Burnout"],
+correct: "Burnout",
+explain: "Burnout includes exhaustion + emotional strain.",
+type: "BU"
+},
+
+{
+q: "You struggle to say no because you worry how others will see you.",
+options: ["Fear","Insecurity","Anxiety","Frustration"],
+correct: "Insecurity",
+explain: "This is about self-worth, not just fear.",
+type: "IN"
+},
+
+{
+q: "You keep scrolling or distracting yourself and can’t focus.",
+options: ["Boredom","Frustration","Anxiety","Contentment"],
+correct: "Boredom",
+explain: "Distraction often signals boredom.",
+type: "BO"
+},
+
+{
+q: "You keep rechecking things even when they’re done.",
+options: ["Perfectionism","Anxiety","Distrust","Control"],
+correct: "Anxiety",
+explain: "Overchecking is often driven by anxiety.",
+type: "AN"
+},
+
+{
+q: "You receive appreciation but feel slightly uncomfortable.",
+options: ["Gratitude","Embarrassment","Humility","Pride"],
+correct: "Pride",
+explain: "Pride is the core emotion here.",
+type: "PR"
+},
+
+{
+q: "You finish something and feel calm satisfaction.",
+options: ["Joy","Relief","Contentment","Pride"],
+correct: "Contentment",
+explain: "Contentment is quiet satisfaction.",
+type: "CO"
+}
+
 ];
 
-let quizHTML = "";
-
-questions.forEach((q, i) => {
-  quizHTML += `<div class="question">
-  <p><b>Q${i+1}:</b> ${q.q}</p>`;
+function loadQuestion() {
+  let q = questions[currentQ];
+  let html = `<p><b>Q${currentQ+1}:</b> ${q.q}</p>`;
   
   q.options.forEach(opt => {
-    quizHTML += `<input type="radio" name="q${i}" value="${opt}"> ${opt}<br>`;
+    html += `<label class="option">
+    <input type="radio" name="option" value="${opt}"> ${opt}
+    </label>`;
   });
 
-  quizHTML += `</div>`;
-});
+  document.getElementById("quiz").innerHTML = html;
+}
 
-document.getElementById("quiz").innerHTML = quizHTML;
+function nextQuestion() {
+  let selected = document.querySelector('input[name="option"]:checked');
+  if (!selected) return alert("Please select an option");
+
+  answers.push(selected.value);
+  currentQ++;
+
+  if (currentQ < questions.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
 
 function showResult() {
-  let score = 0;
+
   let typeCount = {};
 
   questions.forEach((q, i) => {
-    let selected = document.querySelector(`input[name="q${i}"]:checked`);
-    if (!selected) return;
-
-    if (selected.value === q.correct) score++;
-
-    typeCount[q.type] = (typeCount[q.type] || 0) + 1;
+    let t = q.type;
+    typeCount[t] = (typeCount[t] || 0) + 1;
   });
 
-  let dominant = Object.keys(typeCount).reduce((a, b) => typeCount[a] > typeCount[b] ? a : b);
+  let dominant = Object.keys(typeCount).reduce((a,b)=> typeCount[a]>typeCount[b]?a:b);
 
   let resultText = "";
 
   if (dominant === "IN") {
-    resultText = "You tend to interpret situations through self-doubt and uncertainty.";
+    resultText = "You tend to interpret situations through self-doubt. You’re aware, but slightly harsh on yourself.";
   } else if (dominant === "BU") {
-    resultText = "You tend to push through emotions and ignore early signs of exhaustion.";
+    resultText = "You keep going even when drained. You ignore early emotional signals.";
   } else if (dominant === "BO") {
-    resultText = "You disengage when things lack stimulation or meaning.";
+    resultText = "You disengage when things lack meaning. Distraction replaces clarity.";
   } else if (dominant === "AN") {
-    resultText = "You tend to overanalyze and feel underlying anxiety in situations.";
+    resultText = "You tend to overanalyze and feel underlying anxiety.";
   } else {
     resultText = "You show balanced emotional awareness.";
   }
 
+  let review = "<h3>Let’s break down your responses:</h3>";
+
+  questions.forEach((q, i) => {
+    review += `<p><b>Q${i+1}:</b> ${q.q}<br>
+    Your answer: ${answers[i]}<br>
+    Most accurate: ${q.correct}<br>
+    ${q.explain}</p>`;
+  });
+
+  document.getElementById("quiz").innerHTML = "";
+  document.querySelector("button").style.display = "none";
+
   document.getElementById("result").innerHTML =
-    `Score: ${score}/12 <br><br> ${resultText}`;
+    `<h3>Your Insight</h3><p>${resultText}</p>${review}`;
 }
+
+loadQuestion();
 
 </script>
 
