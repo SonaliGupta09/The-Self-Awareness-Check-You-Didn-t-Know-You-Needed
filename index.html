@@ -1,1 +1,161 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emotional Awareness Quiz</title>
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .question { margin-bottom: 20px; }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>The Emotion You Might Be Misreading</h2>
+<p>This isn’t about right or wrong. Answer honestly.</p>
+
+<div id="quiz"></div>
+<button onclick="showResult()">Submit</button>
+
+<h3 id="result"></h3>
+
+<script>
+
+const questions = [
+  {
+    q: "You put effort into something, but the response feels unclear.",
+    options: ["Shame","Frustration","Regret","Envy"],
+    correct: "Frustration",
+    type: "FR"
+  },
+  {
+    q: "You see someone getting recognition you wanted.",
+    options: ["Envy","Betrayal","Disappointment","Pride"],
+    correct: "Envy",
+    type: "EN"
+  },
+  {
+    q: "You feel drained but keep going.",
+    options: ["Burnout","Anxiety","Determination","Guilt"],
+    correct: "Burnout",
+    type: "BU"
+  },
+  {
+    q: "You feel uncertain about your future.",
+    options: ["Insecurity","Excitement","Anger","Hope"],
+    correct: "Insecurity",
+    type: "IN"
+  },
+  {
+    q: "You worry about things not working out and doubt yourself.",
+    options: ["Fear","Insecurity","Anxiety","Frustration"],
+    correct: "Insecurity",
+    type: "IN"
+  },
+  {
+    q: "Things feel repetitive and uninteresting.",
+    options: ["Boredom","Frustration","Anxiety","Contentment"],
+    correct: "Boredom",
+    type: "BO"
+  },
+  {
+    q: "You feel constantly drained and overwhelmed.",
+    options: ["Guilt","Frustration","Anxiety","Burnout"],
+    correct: "Burnout",
+    type: "BU"
+  },
+  {
+    q: "You struggle to say no and feel overwhelmed.",
+    options: ["Fear","Insecurity","Anxiety","Frustration"],
+    correct: "Insecurity",
+    type: "IN"
+  },
+  {
+    q: "You keep scrolling and can’t focus.",
+    options: ["Boredom","Frustration","Anxiety","Contentment"],
+    correct: "Boredom",
+    type: "BO"
+  },
+  {
+    q: "You keep rechecking things even when done.",
+    options: ["Perfectionism","Anxiety","Distrust","Control"],
+    correct: "Anxiety",
+    type: "AN"
+  },
+  {
+    q: "You receive praise but feel slightly uncomfortable.",
+    options: ["Gratitude","Embarrassment","Humility","Pride"],
+    correct: "Pride",
+    type: "PR"
+  },
+  {
+    q: "You feel calm satisfaction after finishing something.",
+    options: ["Joy","Relief","Contentment","Pride"],
+    correct: "Contentment",
+    type: "CO"
+  }
+];
+
+let quizHTML = "";
+
+questions.forEach((q, i) => {
+  quizHTML += `<div class="question">
+  <p><b>Q${i+1}:</b> ${q.q}</p>`;
+  
+  q.options.forEach(opt => {
+    quizHTML += `<input type="radio" name="q${i}" value="${opt}"> ${opt}<br>`;
+  });
+
+  quizHTML += `</div>`;
+});
+
+document.getElementById("quiz").innerHTML = quizHTML;
+
+function showResult() {
+  let score = 0;
+  let typeCount = {};
+
+  questions.forEach((q, i) => {
+    let selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if (!selected) return;
+
+    if (selected.value === q.correct) score++;
+
+    typeCount[q.type] = (typeCount[q.type] || 0) + 1;
+  });
+
+  let dominant = Object.keys(typeCount).reduce((a, b) => typeCount[a] > typeCount[b] ? a : b);
+
+  let resultText = "";
+
+  if (dominant === "IN") {
+    resultText = "You tend to interpret situations through self-doubt and uncertainty.";
+  } else if (dominant === "BU") {
+    resultText = "You tend to push through emotions and ignore early signs of exhaustion.";
+  } else if (dominant === "BO") {
+    resultText = "You disengage when things lack stimulation or meaning.";
+  } else if (dominant === "AN") {
+    resultText = "You tend to overanalyze and feel underlying anxiety in situations.";
+  } else {
+    resultText = "You show balanced emotional awareness.";
+  }
+
+  document.getElementById("result").innerHTML =
+    `Score: ${score}/12 <br><br> ${resultText}`;
+}
+
+</script>
+
+</body>
+</html>
