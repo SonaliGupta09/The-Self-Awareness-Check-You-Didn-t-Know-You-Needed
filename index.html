@@ -19,9 +19,7 @@
       min-height: 100vh;
     }
 
-    h1 {
-      font-size: 26px;
-    }
+    h1 { font-size: 26px; }
 
     .question {
       margin-top: 30px;
@@ -38,9 +36,7 @@
       cursor: pointer;
     }
 
-    .option:hover {
-      background: #f0f0f0;
-    }
+    .option:hover { background: #f0f0f0; }
 
     button {
       margin-top: 20px;
@@ -84,127 +80,176 @@
 
 let currentQ = 0;
 let answers = [];
+let selectedTypes = [];
 
 const questions = [
 
 {
-q: "You put genuine effort into something that mattered to you—maybe a message, a plan, or a thoughtful gesture. But the response you receive feels vague or underwhelming. You begin to question whether it was even good enough.",
-options: ["Shame","Frustration","Regret","Envy"],
+q: "You put genuine effort into something that mattered to you, but the response feels unclear or underwhelming.",
+options: [
+{text:"Shame", type:"SH"},
+{text:"Frustration", type:"FR"},
+{text:"Regret", type:"RG"},
+{text:"Envy", type:"EN"}
+],
 correct: "Frustration",
-explain: "Frustration arises when effort doesn’t meet expectation or response.",
-whyNot: ["Shame = feeling flawed as a person","Regret = wishing you acted differently","Envy = comparing with others"],
-tip: "Seek clarity instead of assuming meaning.",
-type: "FR"
+explain: "Frustration arises when effort doesn’t meet expectation.",
+whyNot: ["Shame = feeling flawed","Regret = past-focused","Envy = comparison"],
+tip: "Seek clarity instead of assuming meaning."
 },
 
 {
-q: "You notice someone receiving appreciation or attention for something that feels very similar to what you’ve done—or wanted to do. There’s a quiet heaviness inside you.",
-options: ["Envy","Betrayal","Disappointment","Pride"],
+q: "You see someone getting recognition you wanted.",
+options: [
+{text:"Envy", type:"EN"},
+{text:"Betrayal", type:"BT"},
+{text:"Disappointment", type:"DS"},
+{text:"Pride", type:"PR"}
+],
 correct: "Envy",
-explain: "Envy arises when we want something someone else has received.",
-whyNot: ["Betrayal = broken trust","Disappointment = passive sadness","Pride = opposite emotion"],
-tip: "Use envy to identify what you value.",
-type: "EN"
+explain: "Envy is wanting what someone else has.",
+whyNot: ["Betrayal = broken trust","Disappointment = passive","Pride = opposite"],
+tip: "Use envy to understand your desires."
 },
 
 {
-q: "You’ve been handling a lot—responsibilities, expectations, or emotional weight. Even though you feel mentally drained, you continue pushing through without taking a pause.",
-options: ["Burnout","Anxiety","Determination","Guilt"],
+q: "You feel drained but keep going.",
+options: [
+{text:"Burnout", type:"BU"},
+{text:"Anxiety", type:"AN"},
+{text:"Determination", type:"DE"},
+{text:"Guilt", type:"GU"}
+],
 correct: "Burnout",
-explain: "Burnout is prolonged emotional and mental exhaustion.",
-whyNot: ["Anxiety = worry-driven","Determination = energizing","Guilt = moral emotion"],
-tip: "Rest before exhaustion becomes collapse.",
-type: "BU"
+explain: "Burnout is prolonged exhaustion.",
+whyNot: ["Anxiety = worry","Determination = energizing","Guilt = moral"],
+tip: "Rest before burnout deepens."
 },
 
 {
-q: "When you think about your future—your path, stability, or direction—you feel uncertain and slightly uneasy about whether things will work out for you.",
-options: ["Insecurity","Excitement","Anger","Hope"],
+q: "You feel uncertain about your future.",
+options: [
+{text:"Insecurity", type:"IN"},
+{text:"Excitement", type:"EX"},
+{text:"Anger", type:"AG"},
+{text:"Hope", type:"HO"}
+],
 correct: "Insecurity",
-explain: "Insecurity involves uncertainty combined with self-doubt.",
-whyNot: ["Excitement = positive anticipation","Anger = reactive emotion","Hope = optimistic expectation"],
-tip: "Focus on what you can control today.",
-type: "IN"
+explain: "Insecurity includes self-doubt + uncertainty.",
+whyNot: ["Excitement = positive","Anger = reactive","Hope = optimistic"],
+tip: "Focus on controllable actions."
 },
 
 {
-q: "You often find yourself thinking about ‘what if things don’t work out’—and along with that comes a quiet doubt about your own ability to handle it.",
-options: ["Fear","Insecurity","Anxiety","Frustration"],
+q: "You doubt your ability while thinking about future.",
+options: [
+{text:"Fear", type:"FE"},
+{text:"Insecurity", type:"IN"},
+{text:"Anxiety", type:"AN"},
+{text:"Frustration", type:"FR"}
+],
 correct: "Insecurity",
-explain: "Insecurity includes both uncertainty and self-doubt.",
-whyNot: ["Fear = immediate threat","Anxiety = general worry","Frustration = blocked outcome"],
-tip: "Separate situation from self-worth.",
-type: "IN"
+explain: "Self-doubt makes it insecurity.",
+whyNot: ["Fear = immediate","Anxiety = general","Frustration = blocked"],
+tip: "Separate situation from self-worth."
 },
 
 {
-q: "You’ve been doing similar things for a while now, and nothing feels particularly engaging or stimulating anymore. You feel disconnected from what you’re doing.",
-options: ["Boredom","Frustration","Anxiety","Contentment"],
+q: "Things feel repetitive and uninteresting.",
+options: [
+{text:"Boredom", type:"BO"},
+{text:"Frustration", type:"FR"},
+{text:"Anxiety", type:"AN"},
+{text:"Contentment", type:"CO"}
+],
 correct: "Boredom",
-explain: "Boredom comes from lack of stimulation or engagement.",
-whyNot: ["Frustration = resistance","Anxiety = worry","Contentment = satisfaction"],
-tip: "Introduce small novelty into routine.",
-type: "BO"
+explain: "Boredom comes from lack of stimulation.",
+whyNot: ["Frustration = resistance","Anxiety = worry","Contentment = peace"],
+tip: "Introduce novelty."
 },
 
 {
-q: "You’ve been constantly occupied—mentally or physically—and it’s starting to affect your energy, your relationships, and even your well-being. But you still keep going.",
-options: ["Guilt","Frustration","Anxiety","Burnout"],
+q: "You feel constantly drained and overwhelmed.",
+options: [
+{text:"Guilt", type:"GU"},
+{text:"Frustration", type:"FR"},
+{text:"Anxiety", type:"AN"},
+{text:"Burnout", type:"BU"}
+],
 correct: "Burnout",
-explain: "Burnout combines exhaustion with emotional strain.",
-whyNot: ["Guilt = moral discomfort","Frustration = situational","Anxiety = mental worry"],
-tip: "Pause before your body forces you to.",
-type: "BU"
+explain: "Burnout = exhaustion + strain.",
+whyNot: ["Guilt = moral","Frustration = situational","Anxiety = mental"],
+tip: "Pause before it worsens."
 },
 
 {
-q: "You find it difficult to say no to things—even when you’re overwhelmed—because a part of you worries about how others might perceive you.",
-options: ["Fear","Insecurity","Anxiety","Frustration"],
+q: "You struggle to say no due to others’ perception.",
+options: [
+{text:"Fear", type:"FE"},
+{text:"Insecurity", type:"IN"},
+{text:"Anxiety", type:"AN"},
+{text:"Frustration", type:"FR"}
+],
 correct: "Insecurity",
-explain: "This reflects concern about self-worth and perception.",
-whyNot: ["Fear = immediate consequence","Anxiety = general worry","Frustration = blocked goal"],
-tip: "Boundaries define your value, not reduce it.",
-type: "IN"
+explain: "Self-worth concern = insecurity.",
+whyNot: ["Fear = immediate","Anxiety = general","Frustration = blocked"],
+tip: "Boundaries build self-respect."
 },
 
 {
-q: "You keep reaching for your phone, scrolling, or distracting yourself—even when you know you have things to do. You feel disconnected and unable to focus.",
-options: ["Boredom","Frustration","Anxiety","Contentment"],
+q: "You keep scrolling and can’t focus.",
+options: [
+{text:"Boredom", type:"BO"},
+{text:"Frustration", type:"FR"},
+{text:"Anxiety", type:"AN"},
+{text:"Contentment", type:"CO"}
+],
 correct: "Boredom",
-explain: "Distraction is often a response to boredom.",
-whyNot: ["Frustration = resistance","Anxiety = restlessness","Contentment = calm state"],
-tip: "Replace distraction with slight engagement.",
-type: "BO"
+explain: "Distraction signals boredom.",
+whyNot: ["Frustration = blocked","Anxiety = restlessness","Contentment = calm"],
+tip: "Engage slightly instead of escaping."
 },
 
 {
-q: "You often find yourself rechecking things repeatedly—even when they’re already done well. Letting go feels uncomfortable.",
-options: ["Perfectionism","Anxiety","Distrust","Control"],
+q: "You keep rechecking things.",
+options: [
+{text:"Perfectionism", type:"PF"},
+{text:"Anxiety", type:"AN"},
+{text:"Distrust", type:"DT"},
+{text:"Control", type:"CT"}
+],
 correct: "Anxiety",
-explain: "Overchecking is driven by underlying anxiety.",
+explain: "Overchecking = anxiety.",
 whyNot: ["Perfectionism = trait","Distrust = belief","Control = behavior"],
-tip: "Done is often better than perfect.",
-type: "AN"
+tip: "Trust completion."
 },
 
 {
-q: "You receive appreciation or recognition for something you’ve done. You feel good—but also slightly uncomfortable being the center of attention.",
-options: ["Gratitude","Embarrassment","Humility","Pride"],
+q: "You receive praise but feel uncomfortable.",
+options: [
+{text:"Gratitude", type:"GR"},
+{text:"Embarrassment", type:"EM"},
+{text:"Humility", type:"HU"},
+{text:"Pride", type:"PR"}
+],
 correct: "Pride",
-explain: "Pride is the core emotion tied to achievement.",
-whyNot: ["Embarrassment = secondary reaction","Gratitude = outward emotion","Humility = trait"],
-tip: "Allow yourself to accept recognition.",
-type: "PR"
+explain: "Pride = achievement emotion.",
+whyNot: ["Embarrassment = reaction","Gratitude = outward","Humility = trait"],
+tip: "Allow recognition."
 },
 
 {
-q: "You complete something meaningful and take a quiet moment to reflect. You feel calm, fulfilled, and at ease—without needing celebration.",
-options: ["Joy","Relief","Contentment","Pride"],
+q: "You feel calm satisfaction after finishing something.",
+options: [
+{text:"Joy", type:"JO"},
+{text:"Relief", type:"RE"},
+{text:"Contentment", type:"CO"},
+{text:"Pride", type:"PR"}
+],
 correct: "Contentment",
-explain: "Contentment is quiet satisfaction and inner peace.",
-whyNot: ["Joy = high energy","Relief = tension release","Pride = achievement-focused"],
-tip: "Notice and appreciate quiet fulfillment.",
-type: "CO"
+explain: "Contentment = quiet satisfaction.",
+whyNot: ["Joy = energetic","Relief = release","Pride = achievement"],
+tip: "Notice calm fulfillment."
 }
 
 ];
@@ -212,10 +257,11 @@ type: "CO"
 function loadQuestion() {
   let q = questions[currentQ];
   let html = `<div class="question"><b>Q${currentQ+1}:</b> ${q.q}</div>`;
-  
+
   q.options.forEach(opt => {
     html += `<label class="option">
-    <input type="radio" name="option" value="${opt}"> ${opt}
+    <input type="radio" name="option" value="${opt.text}" data-type="${opt.type}">
+    ${opt.text}
     </label>`;
   });
 
@@ -227,6 +273,8 @@ function nextQuestion() {
   if (!selected) return alert("Please select an option");
 
   answers.push(selected.value);
+  selectedTypes.push(selected.dataset.type);
+
   currentQ++;
 
   if (currentQ < questions.length) {
@@ -243,7 +291,9 @@ function showResult() {
 
   questions.forEach((q, i) => {
     if (answers[i] === q.correct) score++;
-    typeCount[q.type] = (typeCount[q.type] || 0) + 1;
+
+    let t = selectedTypes[i];
+    typeCount[t] = (typeCount[t] || 0) + 1;
   });
 
   let dominant = Object.keys(typeCount).reduce((a,b)=> typeCount[a]>typeCount[b]?a:b);
@@ -251,15 +301,17 @@ function showResult() {
   let resultText = "";
 
   if (score >= 9) {
-    resultText = "You are emotionally precise. You can distinguish subtle emotional differences clearly. But awareness without action can keep you stuck—use your clarity to respond, not just observe.";
+    resultText = "You are emotionally precise. You can distinguish subtle emotional differences clearly. But awareness must turn into action.";
   } else if (dominant === "IN") {
-    resultText = "You tend to interpret situations through self-doubt. You are reflective and aware—but slightly harsh on yourself.";
+    resultText = "You tend to interpret situations through self-doubt. You are reflective—but slightly harsh on yourself.";
   } else if (dominant === "BU") {
-    resultText = "You keep going even when drained. You tend to ignore early emotional signals until they become overwhelming.";
+    resultText = "You tend to push through exhaustion and ignore emotional signals.";
   } else if (dominant === "BO") {
-    resultText = "You disengage when things lack meaning. Distraction often replaces deeper clarity.";
+    resultText = "You disengage when things lack meaning and stimulation.";
+  } else if (dominant === "AN") {
+    resultText = "You tend to overanalyze and feel underlying anxiety.";
   } else {
-    resultText = "You show balanced emotional awareness.";
+    resultText = "You show a mixed emotional pattern—your awareness is developing.";
   }
 
   let review = `<div class='result-box'><h3>Your Insight</h3><p>${resultText}</p></div>`;
